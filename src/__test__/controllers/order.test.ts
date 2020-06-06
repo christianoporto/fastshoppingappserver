@@ -14,6 +14,7 @@ const productSample: IProduct = {
 };
 const orderMock: IOrder = {
     id: "orderid",
+    number: "100234234",
     customerId: "customerId",
     dateCreated: new Date(),
     items: [{ orderId: "orderid", productId: "product", quantity: 2, id: "1", product: productSample }],
@@ -29,6 +30,6 @@ jest.mock("../../controllers/index", () => () => {
 describe("Test Sequelize order Mocking", () => {
     it("Should get totalAmount from mock order", async () => {
         const order = await calculateTotalAmountAsync(orderMock);
-        expect(order.totalAmount).toEqual(345);
+        expect(order.totalAmount).toEqual(690);
     });
 });

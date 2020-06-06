@@ -5,6 +5,7 @@ import { IOrderItem } from "./OrderItem";
 
 export interface IOrder {
     id?: string;
+    number: string;
     customerId: string;
     dateCreated: Date;
     totalAmount: number;
