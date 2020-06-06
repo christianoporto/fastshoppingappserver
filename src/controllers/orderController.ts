@@ -8,6 +8,10 @@ export function OrderController(sequelize: Sequelize): OrderStatic {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
+        number: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         customerId: {
             type: DataTypes.STRING,
             allowNull: false,

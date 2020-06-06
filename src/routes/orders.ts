@@ -27,9 +27,13 @@ orderRouter.post("/", async (req: Request, res: Response) => {
     try {
         let order: IOrder = req.body;
         if (isOrderModelValid(order)) {
-            const result = await orderRepository.createAllOrder(order);
-            if (result) res.send(result);
-            else sendBadRequest(res, "Creation invalid");
+            let result = await orderRepository.createAllOrder(order);
+            if (result) {
+                if (!result.customer && result.id) {
+                    result = await orderRepository.findById(result.id);
+                }
+                res.send(result);
+            } else sendBadRequest(res, "Creation invalid");
         } else {
             sendInvalidModel(res);
         }
