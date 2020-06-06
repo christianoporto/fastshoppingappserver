@@ -1,8 +1,9 @@
 import { DataTypes, Sequelize } from "sequelize";
 import { ProductStatic } from "../models/Product";
+import { ProductCategory } from ".";
 
 export function ProductController(sequelize: Sequelize): ProductStatic {
-    return <ProductStatic>sequelize.define("products", {
+    const product = <ProductStatic>sequelize.define("products", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -21,5 +22,11 @@ export function ProductController(sequelize: Sequelize): ProductStatic {
             type: DataTypes.DOUBLE,
             allowNull: false,
         },
+        image: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     });
+    product.hasMany(ProductCategory, { as: "categories" });
+    return product;
 }

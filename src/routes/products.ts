@@ -1,12 +1,20 @@
 import express, { Request, Response, response } from "express";
-import { Product } from "../controllers";
+import { Product, ProductCategory, Category } from "../controllers";
 import { IProduct, isModelValid } from "../models/Product";
 
 export const productRouter = express.Router();
 
 productRouter.get("/", async (req: Request, res: Response) => {
     try {
-        const products = await Product.findAll();
+        const products = await Product.findAll({
+            include: [
+                {
+                    model: ProductCategory,
+                    as: "categories",
+                    include: [{ model: Category }],
+                },
+            ],
+        });
         res.send(products);
     } catch (e) {
         console.log("ERROR: ", e.message);

@@ -1,6 +1,14 @@
 import { ProductController } from "./productController";
-import sequelizeConnection from "../config/sequelizeConnection";
+import dbConfig from "../config/dbConfig";
 import { CategoryController } from "./categoryController";
+import { ProductCategoryController } from "./productCategoryController";
+import { CustomerController } from "./customerController";
+import { OrderController } from "./orderController";
+import { OrderItemController } from "./orderItem";
 
-export const Product = ProductController(sequelizeConnection);
-export const Category = CategoryController(sequelizeConnection);
+export const Product = ProductController(dbConfig);
+export const Category = CategoryController(dbConfig);
+export const ProductCategory = ProductCategoryController(dbConfig);
+export const Customer = CustomerController(dbConfig);
+export const Order = OrderController(dbConfig);
+export const OrderItem = OrderItemController(dbConfig);

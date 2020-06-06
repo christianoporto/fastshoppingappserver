@@ -1,9 +1,13 @@
-import express, { Application, Request, Response, NextFunction } from "express";
-import sequelizeConnection from "./config/sequelizeConnection";
+import express, { Application } from "express";
+import dbConfig from "./config/dbConfig";
 import bodyParser from "body-parser";
 import { productRouter } from "./routes/products";
+import { productCategoryRouter } from "./routes/productCategories";
+import { categoryRouter } from "./routes/categories";
+import { customerRouter } from "./routes/customers";
+import { orderRouter } from "./routes/orders";
 
-sequelizeConnection
+dbConfig
     .authenticate()
     .then(() => console.log("connected to db"))
     .catch((err) => {
@@ -26,6 +30,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: "5m" }));
 
 app.use("/products", productRouter);
+app.use("/categories", productCategoryRouter);
+app.use("/productcategories", categoryRouter);
+app.use("/customers", customerRouter);
+app.use("/orders", orderRouter);
 
 app.listen(app.get("port"), () => {
     console.log(`Server on port ${app.get("port")}`);
