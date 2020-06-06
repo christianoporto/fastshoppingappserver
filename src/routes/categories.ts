@@ -1,28 +1,27 @@
 import express, { Request, Response } from "express";
 import { Category } from "../controllers";
 import { categoryIsValid, ICategory } from "../models/Category";
+import categoryRepository from "../repositories/categoryRepository";
+import { sendBadRequest, checkIfExists, sendInvalidModel, sendNotFound } from ".";
 
 export const categoryRouter = express.Router();
 
 categoryRouter.get("/", async (req: Request, res: Response) => {
     try {
-        const categories = await Category.findAll();
+        const categories = await categoryRepository.listAll();
         res.send(categories);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
 categoryRouter.get("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const category = await Category.findOne({ where: { id } });
-        if (category) res.send(category);
-        else res.status(404).send("NOT FOUND");
+        const category = await categoryRepository.findById(id);
+        checkIfExists(category, res);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
@@ -30,15 +29,14 @@ categoryRouter.post("/", async (req: Request, res: Response) => {
     try {
         const category: ICategory = req.body;
         if (categoryIsValid(category)) {
-            const result = await Category.create(category);
+            const result = await categoryRepository.createCategory(category);
             if (result) res.send(result);
-            else res.status(400).send("Creation invalid");
+            else sendBadRequest(res, "There was an error trying to create the category");
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 categoryRouter.put("/:id", async (req: Request, res: Response) => {
@@ -47,35 +45,26 @@ categoryRouter.put("/:id", async (req: Request, res: Response) => {
         if (categoryIsValid(category)) {
             const { id } = req.params;
             category.id = id;
-            const result = await Category.update(category, { where: { id } });
-            if (result) res.send({ id, ...category });
+            const result = await categoryRepository.update(category, id);
+            if (result) res.send(category);
             else {
-                const existing = await Category.findOne({ where: { id } });
-                if (!existing) {
-                    res.status(404).send("not found");
-                } else res.status(400).send("Creation invalid");
+                const existing = await categoryRepository.findById(id);
+                return existing ? sendBadRequest(res, "Creation invalid") : sendNotFound(res);
             }
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
 categoryRouter.delete("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const category = await Category.findOne({ where: { id } });
-        if (category) {
-            await category.destroy();
-            res.send(category);
-        } else {
-            res.status(400).send("NOT FOUND");
-        }
+        const category = await categoryRepository.delete(id);
+        checkIfExists(category, res);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });

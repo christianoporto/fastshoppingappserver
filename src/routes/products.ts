@@ -1,50 +1,39 @@
-import express, { Request, Response, response } from "express";
-import { Product, ProductCategory, Category } from "../controllers";
+import express, { Request, Response } from "express";
 import { IProduct, isProductModelValid } from "../models/Product";
+import productRepository from "../repositories/productRepository";
+import { sendBadRequest, checkIfExists, sendInvalidModel, sendNotFound } from ".";
 
 export const productRouter = express.Router();
 
 productRouter.get("/", async (req: Request, res: Response) => {
     try {
-        const products = await Product.findAll({
-            include: [
-                {
-                    model: ProductCategory,
-                    as: "categories",
-                    include: [{ model: Category }],
-                },
-            ],
-        });
+        const products = await productRepository.listAll();
         res.send(products);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 productRouter.get("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
-        const result = await Product.findOne({ where: { id } });
-        if (result) res.send(result);
-        else res.status(404).send("Product not found");
+        const result = await productRepository.findById(id);
+        checkIfExists(result, res);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 productRouter.post("/", async (req: Request, res: Response) => {
     try {
         const product: IProduct = req.body;
         if (isProductModelValid(product)) {
-            const result = await Product.create(product);
+            const result = await productRepository.createProduct(product);
             if (result) res.send(result);
-            else res.status(400).send("Creation invalid");
+            else sendBadRequest(res, "There was an error trying to create the product");
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 productRouter.put("/:id", async (req: Request, res: Response) => {
@@ -53,35 +42,26 @@ productRouter.put("/:id", async (req: Request, res: Response) => {
         if (isProductModelValid(product)) {
             const { id } = req.params;
             product.id = id;
-            const result = await Product.update(product, { where: { id } });
-            if (result) res.send({ id, ...product });
+            const result = await productRepository.update(product, id);
+            if (result) res.send(product);
             else {
-                const existing = await Product.findOne({ where: { id } });
-                if (!existing) {
-                    res.status(404).send("not found");
-                } else res.status(400).send("Creation invalid");
+                const existing = await productRepository.findById(id);
+                return existing ? sendBadRequest(res, "Creation invalid") : sendNotFound(res);
             }
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
 productRouter.delete("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const product = await Product.findOne({ where: { id } });
-        if (product) {
-            await product.destroy();
-            res.send(product);
-        } else {
-            res.status(400).send("NOT FOUND");
-        }
+        const product = await productRepository.delete(id);
+        checkIfExists(product, res);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });

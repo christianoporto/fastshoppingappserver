@@ -4,7 +4,7 @@ import { IProductCategory } from "./ProductCategory";
 export interface IProduct {
     id?: string;
     name: string;
-    descrption: string;
+    description: string;
     price: number;
     image: string;
     categories: IProductCategory[];
@@ -13,7 +13,7 @@ export interface ProductModel extends Model<IProduct>, IProduct {}
 export class Product extends Model<ProductModel, IProduct> {}
 
 export const isProductModelValid = (m: IProduct) => {
-    const invalid = m.price <= 0 || stringIsNullOrEmpty(m.name) || stringIsNullOrEmpty(m.descrption);
+    const invalid = m.price <= 0 || stringIsNullOrEmpty(m.name) || stringIsNullOrEmpty(m.description);
     return invalid;
 };
 

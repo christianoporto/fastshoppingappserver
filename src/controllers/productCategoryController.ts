@@ -1,6 +1,5 @@
 import { DataTypes, Sequelize } from "sequelize";
 import { ProductCategoryStatic } from "../models/ProductCategory";
-import { Product, Category } from ".";
 
 export function ProductCategoryController(sequelize: Sequelize): ProductCategoryStatic {
     const productCategory = <ProductCategoryStatic>sequelize.define("productCategories", {

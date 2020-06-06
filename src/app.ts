@@ -30,8 +30,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: "5m" }));
 
 app.use("/products", productRouter);
-app.use("/categories", productCategoryRouter);
-app.use("/productcategories", categoryRouter);
+app.use("/categories", categoryRouter);
+app.use("/productcategories", productCategoryRouter);
 app.use("/customers", customerRouter);
 app.use("/orders", orderRouter);
 

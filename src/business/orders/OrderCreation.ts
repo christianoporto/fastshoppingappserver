@@ -11,7 +11,7 @@ const setProduct = async (item: IOrderItem) => {
     }
 };
 
-const calculateTotalAmountAsync = async (order: IOrder): Promise<IOrder> => {
+export const calculateTotalAmountAsync = async (order: IOrder): Promise<IOrder> => {
     let promises: any[] = [];
     order.items.forEach((element) => {
         if (!element.product && element.productId) {

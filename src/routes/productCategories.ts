@@ -1,28 +1,26 @@
 import express, { Request, Response } from "express";
-import { ProductCategory } from "../controllers";
 import { IProductCategory, productCategoryIsValid } from "../models/ProductCategory";
+import productCategoryRepository from "../repositories/productCategoryRepository";
+import { sendBadRequest, checkIfExists, sendInvalidModel, sendNotFound } from ".";
 
 export const productCategoryRouter = express.Router();
 
 productCategoryRouter.get("/", async (req: Request, res: Response) => {
     try {
-        const productCategories = await ProductCategory.findAll();
+        const productCategories = await productCategoryRepository.listAll();
         res.send(productCategories);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
 productCategoryRouter.get("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const productCategory = await ProductCategory.findOne({ where: { id } });
-        if (productCategory) res.send(productCategory);
-        else res.status(404).send("NOT FOUND");
+        const productCategory = await productCategoryRepository.findById(id);
+        checkIfExists(productCategory, res);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
@@ -30,15 +28,14 @@ productCategoryRouter.post("/", async (req: Request, res: Response) => {
     try {
         const productCategory: IProductCategory = req.body;
         if (productCategoryIsValid(productCategory)) {
-            const result = await ProductCategory.create(productCategory);
+            const result = await productCategoryRepository.createCategory(productCategory);
             if (result) res.send(result);
-            else res.status(400).send("Creation invalid");
+            else sendBadRequest(res, "Creation invalid");
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 productCategoryRouter.put("/:id", async (req: Request, res: Response) => {
@@ -47,35 +44,26 @@ productCategoryRouter.put("/:id", async (req: Request, res: Response) => {
         if (productCategoryIsValid(productCategory)) {
             const { id } = req.params;
             productCategory.id = id;
-            const result = await ProductCategory.update(productCategory, { where: { id } });
-            if (result) res.send({ ...productCategory, id });
+            const result = await productCategoryRepository.update(productCategory, id);
+            if (result) res.send(productCategory);
             else {
-                const existing = await ProductCategory.findOne({ where: { id } });
-                if (!existing) {
-                    res.status(404).send("not found");
-                } else res.status(400).send("Creation invalid");
+                const existing = await productCategoryRepository.findById(id);
+                return existing ? sendBadRequest(res, "Creation invalid") : sendNotFound(res);
             }
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
 productCategoryRouter.delete("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const productCategory = await ProductCategory.findOne({ where: { id } });
-        if (productCategory) {
-            await productCategory.destroy();
-            res.send(productCategory);
-        } else {
-            res.status(400).send("NOT FOUND");
-        }
+        const productCategory = await productCategoryRepository.delete(id);
+        checkIfExists(productCategory, res);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });

@@ -2,7 +2,7 @@ import { DataTypes, Sequelize } from "sequelize";
 import { OrderStatic } from "../models/Order";
 
 export function OrderController(sequelize: Sequelize): OrderStatic {
-  let Order =  <OrderStatic>sequelize.define("orders", {
+    return <OrderStatic>sequelize.define("orders", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -18,12 +18,11 @@ export function OrderController(sequelize: Sequelize): OrderStatic {
         },
         dateCreated: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
         },
         totalAmount: {
             type: DataTypes.NUMBER,
             allowNull: false,
         },
     });
-    return Order;
 }

@@ -8,7 +8,7 @@ export interface IOrder {
     customerId: string;
     dateCreated: Date;
     totalAmount: number;
-    customer: ICustomer;
+    customer?: ICustomer;
     items: IOrderItem[];
 }
 export interface OrderModel extends Model<IOrder>, IOrder {}

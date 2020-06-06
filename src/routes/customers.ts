@@ -2,52 +2,53 @@ import express, { Request, Response } from "express";
 import { Customer } from "../controllers";
 import { ICustomer, isCustomerModelValid } from "../models/Customer";
 import { Filterable } from "sequelize/types";
+import { sendBadRequest, checkIfExists, sendInvalidModel, sendNotFound } from ".";
+import customerRepository from "../repositories/customerRepository";
+import categoryRepository from "../repositories/categoryRepository";
 
 export const customerRouter = express.Router();
 
 customerRouter.get("/", async (req: Request, res: Response) => {
     try {
-        const customers = await Customer.findAll();
+        const customers = await customerRepository.listAll();
         res.send(customers);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
-const getByFilter = async (res: Response, filter: Filterable["where"]) => {
-    try {
-        const customer = await Customer.findOne({ where: filter });
-        if (customer) res.send(customer);
-        else res.status(404).send("NOT FOUND");
-    } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
-    }
-};
 customerRouter.get("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
-    getByFilter(res, { id });
+    try {
+        const customer = await customerRepository.findById(id);
+        checkIfExists(customer, res);
+    } catch (e) {
+        sendBadRequest(res, e.message);
+    }
 });
 
 customerRouter.get("/email/:email", async (req: Request, res: Response) => {
     const { email } = req.params;
-    getByFilter(res, { email });
+    try {
+        const customer = await customerRepository.finbByEmail(email);
+        checkIfExists(customer, res);
+    } catch (e) {
+        sendBadRequest(res, e.message);
+    }
 });
 
 customerRouter.post("/", async (req: Request, res: Response) => {
     try {
         const customer: ICustomer = req.body;
         if (isCustomerModelValid(customer)) {
-            const result = await Customer.create(customer);
+            const result = await customerRepository.createCustomer(customer);
             if (result) res.send(result);
-            else res.status(400).send("Creation invalid");
+            else sendBadRequest(res, "There was an error trying to create the customer");
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 customerRouter.put("/:id", async (req: Request, res: Response) => {
@@ -56,35 +57,26 @@ customerRouter.put("/:id", async (req: Request, res: Response) => {
         if (isCustomerModelValid(customer)) {
             const { id } = req.params;
             customer.id = id;
-            const result = await Customer.update(customer, { where: { id } });
-            if (result) res.send({ ...customer, id });
+            const result = await customerRepository.update(customer, id);
+            if (result) res.send({ ...customer });
             else {
-                const existing = await Customer.findOne({ where: { id } });
-                if (!existing) {
-                    res.status(404).send("not found");
-                } else res.status(400).send("Creation invalid");
+                const existing = await customerRepository.findById(id);
+                return existing ? sendBadRequest(res, "Creation invalid") : sendNotFound(res);
             }
         } else {
-            res.status(400).send("The model format is not valid");
+            sendInvalidModel(res);
         }
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
 
 customerRouter.delete("/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const customer = await Customer.findOne({ where: { id } });
-        if (customer) {
-            await customer.destroy();
-            res.send(customer);
-        } else {
-            res.status(400).send("NOT FOUND");
-        }
+        const customer = await customerRepository.delete(id);
+        checkIfExists(customer, res);
     } catch (e) {
-        console.log("ERROR: ", e.message);
-        res.status(400).send(e.message);
+        sendBadRequest(res, e.message);
     }
 });
