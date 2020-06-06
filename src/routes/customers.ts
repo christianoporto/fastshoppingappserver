@@ -11,7 +11,7 @@ customerRouter.get("/", async (req: Request, res: Response) => {
         res.send(customers);
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 
@@ -22,7 +22,7 @@ const getByFilter = async (res: Response, filter: Filterable["where"]) => {
         else res.status(404).send("NOT FOUND");
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 };
 customerRouter.get("/:id", async (req: Request, res: Response) => {
@@ -47,7 +47,7 @@ customerRouter.post("/", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 customerRouter.put("/:id", async (req: Request, res: Response) => {
@@ -69,7 +69,7 @@ customerRouter.put("/:id", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 
@@ -85,6 +85,6 @@ customerRouter.delete("/:id", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });

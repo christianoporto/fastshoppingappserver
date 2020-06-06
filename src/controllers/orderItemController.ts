@@ -14,7 +14,7 @@ export function OrderItemController(sequelize: Sequelize): OrderItemStatic {
             references: { model: "orders", key: "id" },
         },
         productId: {
-            type: DataTypes.DATE,
+            type: DataTypes.STRING,
             allowNull: false,
             references: { model: "products", key: "id" },
         },

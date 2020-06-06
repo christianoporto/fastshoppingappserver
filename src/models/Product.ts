@@ -12,7 +12,7 @@ export interface IProduct {
 export interface ProductModel extends Model<IProduct>, IProduct {}
 export class Product extends Model<ProductModel, IProduct> {}
 
-export const isModelValid = (m: IProduct) => {
+export const isProductModelValid = (m: IProduct) => {
     const invalid = m.price <= 0 || stringIsNullOrEmpty(m.name) || stringIsNullOrEmpty(m.descrption);
     return invalid;
 };

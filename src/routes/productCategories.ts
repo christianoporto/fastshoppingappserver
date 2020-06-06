@@ -10,7 +10,7 @@ productCategoryRouter.get("/", async (req: Request, res: Response) => {
         res.send(productCategories);
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 
@@ -22,7 +22,7 @@ productCategoryRouter.get("/:id", async (req: Request, res: Response) => {
         else res.status(404).send("NOT FOUND");
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 
@@ -38,7 +38,7 @@ productCategoryRouter.post("/", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 productCategoryRouter.put("/:id", async (req: Request, res: Response) => {
@@ -60,7 +60,7 @@ productCategoryRouter.put("/:id", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 
@@ -76,6 +76,6 @@ productCategoryRouter.delete("/:id", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });

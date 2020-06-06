@@ -26,7 +26,6 @@ export function ProductController(sequelize: Sequelize): ProductStatic {
             type: DataTypes.STRING,
             allowNull: true,
         },
-    });
-    product.hasMany(ProductCategory, { as: "categories" });
+    }); 
     return product;
 }

@@ -1,6 +1,6 @@
 import express, { Request, Response, response } from "express";
 import { Product, ProductCategory, Category } from "../controllers";
-import { IProduct, isModelValid } from "../models/Product";
+import { IProduct, isProductModelValid } from "../models/Product";
 
 export const productRouter = express.Router();
 
@@ -18,7 +18,7 @@ productRouter.get("/", async (req: Request, res: Response) => {
         res.send(products);
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 productRouter.get("/:id", async (req: Request, res: Response) => {
@@ -29,13 +29,13 @@ productRouter.get("/:id", async (req: Request, res: Response) => {
         else res.status(404).send("Product not found");
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 productRouter.post("/", async (req: Request, res: Response) => {
     try {
         const product: IProduct = req.body;
-        if (isModelValid(product)) {
+        if (isProductModelValid(product)) {
             const result = await Product.create(product);
             if (result) res.send(result);
             else res.status(400).send("Creation invalid");
@@ -44,13 +44,13 @@ productRouter.post("/", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 productRouter.put("/:id", async (req: Request, res: Response) => {
     try {
         let product: IProduct = req.body;
-        if (isModelValid(product)) {
+        if (isProductModelValid(product)) {
             const { id } = req.params;
             product.id = id;
             const result = await Product.update(product, { where: { id } });
@@ -66,7 +66,7 @@ productRouter.put("/:id", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });
 
@@ -82,6 +82,6 @@ productRouter.delete("/:id", async (req: Request, res: Response) => {
         }
     } catch (e) {
         console.log("ERROR: ", e.message);
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 });

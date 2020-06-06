@@ -26,7 +26,6 @@ export function ProductCategoryController(sequelize: Sequelize): ProductCategory
             },
         },
     });
-    productCategory.belongsTo(Product);
-    productCategory.belongsTo(Category);
+
     return productCategory;
 }

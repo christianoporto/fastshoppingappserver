@@ -7,15 +7,15 @@ export interface IOrderItem {
     orderId: string;
     productId: string;
     quantity: number;
-    product: IProduct;
+    product?: IProduct;
 }
 export interface OrderItemModel extends Model<IOrderItem>, IOrderItem {}
-export class OrderItem extends Model<OrderItem, IOrderItem> {}
+export class OrderItem extends Model<OrderItemModel, IOrderItem> {}
 
 export const isOrderItemModelValid = (m: IOrderItem) => {
     return m.quantity <= 0 || stringIsNullOrEmpty(m.orderId) || stringIsNullOrEmpty(m.productId);
 };
 
 export type OrderItemStatic = typeof Model & {
-    new (values?: object, options?: BuildOptions): OrderItem;
+    new (values?: object, options?: BuildOptions): OrderItemModel;
 };
