@@ -1,6 +1,7 @@
 import { Customer, OrderItem, Product, Order } from "../controllers";
 import { IOrder } from "../models/Order";
 import { createAllOrderAsync } from "../business/orders/OrderCreation";
+import { IPaginationRequest, IPaginationList } from "../models/helpers/Pagination";
 
 const filterFindOneWithAll = (id: string) => {
     return {

@@ -26,6 +26,10 @@ export function ProductController(sequelize: Sequelize): ProductStatic {
             type: DataTypes.STRING,
             allowNull: true,
         },
-    }); 
+        dateCreated: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+    });
     return product;
 }
