@@ -7,6 +7,7 @@ import { calculateTotalAmountAsync } from "../../business/orders/OrderCreation";
 const productSample: IProduct = {
     categories: [],
     description: "des",
+    dateCreated: new Date(),
     image: "imag",
     name: "productname",
     price: 345,
