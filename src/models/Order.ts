@@ -16,7 +16,7 @@ export interface OrderModel extends Model<IOrder>, IOrder {}
 export class Order extends Model<OrderModel, IOrder> {}
 
 export const isOrderModelValid = (m: IOrder) => {
-    const invalid = m.items.length <= 0 || stringIsNullOrEmpty(m.customerId);
+    const invalid = m.items.length <= 0 || (stringIsNullOrEmpty(m.customerId) && !m.customer);
     return !invalid;
 };
 
