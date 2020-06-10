@@ -2,7 +2,7 @@ import { DataTypes, Sequelize } from "sequelize";
 import { ProductCategoryStatic } from "../models/ProductCategory";
 
 export function ProductCategoryController(sequelize: Sequelize): ProductCategoryStatic {
-    const productCategory = <ProductCategoryStatic>sequelize.define("productCategories", {
+    const productCategory = <ProductCategoryStatic>sequelize.define("productcategories", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
