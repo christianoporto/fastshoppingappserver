@@ -6,7 +6,10 @@ export const checkIfExists = (result: any, res: Response) => {
 };
 export const sendBadRequest = (res: Response, message?: string) => {
     const optionmessage = message ? message : "Bad request";
-    return res.status(400).send(optionmessage);
+    return res.status(400).send({
+        status: 400,
+        message: optionmessage,
+    });
 };
 export const sendInvalidModel = (res: Response) => {
     res.status(400).send("The model format is not valid");

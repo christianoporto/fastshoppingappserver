@@ -6,6 +6,7 @@ import { productCategoryRouter } from "./routes/productCategories";
 import { categoryRouter } from "./routes/categories";
 import { customerRouter } from "./routes/customers";
 import { orderRouter } from "./routes/orders";
+const cors = require("cors");
 
 dbConfig
     .authenticate()
@@ -16,15 +17,20 @@ dbConfig
     });
 
 const app: Application = express();
-
+const corsOptions = {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+};
 if (process.env.NODE_ENV === "production") {
     app.use(require("helmet")());
     app.use(require("compression")());
 } else {
-    app.use(require("cors")());
+    app.use(cors(corsOptions));
 }
 
-app.set("port", process.env.PORT || 5000);
+app.set("port", process.env.PORT || 5500);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: "5m" }));

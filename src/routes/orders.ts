@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { isOrderModelValid, IOrder } from "../models/Order";
 import { checkIfExists, sendBadRequest, sendInvalidModel, sendNotFound } from ".";
 import orderRepository from "../repositories/orderRepository";
+import { IPaginationRequest } from "../models/helpers/Pagination";
 
 export const orderRouter = express.Router();
 
